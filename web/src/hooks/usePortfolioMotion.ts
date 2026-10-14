@@ -9,7 +9,7 @@ export function usePortfolioMotion() {
     if (reducedMotion.matches) return;
     let disposed = false;
     let cleanupAnimation: (() => void) | undefined;
-    const timer = window.setTimeout(async () => {
+    const startMotion = async () => {
       try {
         const [{ gsap }, { default: AOS }] = await Promise.all([import('gsap'), import('aos')]);
         if (disposed || reducedMotion.matches) return;
@@ -29,7 +29,12 @@ export function usePortfolioMotion() {
       } catch {
         // El contenido sigue visible si falla una mejora visual opcional.
       }
-    }, 150);
+    };
+    // En móvil la ilustración está por debajo de la introducción. Se descarga
+    // la mejora al comenzar a explorar, sin competir con el título principal.
+    const mobile = window.matchMedia('(max-width: 800px)').matches;
+    const timer = mobile ? undefined : window.setTimeout(startMotion, 1000);
+    if (mobile) window.addEventListener('scroll', startMotion, { once: true, passive: true });
     const stop = () => {
       if (!reducedMotion.matches) return;
       cleanupAnimation?.();
@@ -38,7 +43,8 @@ export function usePortfolioMotion() {
     reducedMotion.addEventListener('change', stop);
     return () => {
       disposed = true;
-      window.clearTimeout(timer);
+      if (timer !== undefined) window.clearTimeout(timer);
+      window.removeEventListener('scroll', startMotion);
       cleanupAnimation?.();
       reducedMotion.removeEventListener('change', stop);
     };

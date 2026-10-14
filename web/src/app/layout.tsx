@@ -5,11 +5,11 @@ import './globals.css';
 
 const bodyFont = localFont({
   src: '../../node_modules/@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2',
-  variable: '--font-body', display: 'swap', weight: '100 900',
+  variable: '--font-body', display: 'optional', weight: '100 900',
 });
 const headingFont = localFont({
   src: '../../node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2',
-  variable: '--font-heading', display: 'swap', weight: '300 700',
+  variable: '--font-heading', display: 'optional', weight: '300 700',
 });
 
 export const metadata: Metadata = {

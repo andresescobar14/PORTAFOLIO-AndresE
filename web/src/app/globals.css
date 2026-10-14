@@ -125,6 +125,14 @@ svg { flex-shrink: 0; }
 .footer { display: flex; align-items: center; justify-content: space-between; padding-block: 34px; gap: 20px; }.footer strong { font-family: var(--font-heading); font-size: 15px; font-weight: 500; }.footer strong span { color: var(--blue); }.footer small { display: block; margin-top: 6px; font-size: 10px; color: #8190a6; }.footer-links { display: flex; align-items: center; gap: 26px; }.footer-links a { display: inline-flex; align-items: center; gap: 8px; font-size: 10px; color: #697b95; }.footer-links .back-to-top { width: 35px; height: 35px; border: 1px solid #dfe6f2; justify-content: center; border-radius: 50%; }
 .not-found { padding-block: 120px; }.not-found h1 { margin-top: 25px; font-size: clamp(36px, 5vw, 70px); line-height: 1.15; letter-spacing: -2px; }.not-found > p:not(.eyebrow) { margin-block: 25px; color: var(--muted); }
 /* AOS only adds motion. Content stays visible before JS and on load failures. */
+.brand-text small, .hero-note, .hero-bottom, .canvas-label,
+.skills-section .eyebrow > span, .projects-section .eyebrow > span,
+.side-note, .tech-category, .skill-card > p, .skills-footnote,
+.chip-code small, .project-category, .project-meta > a,
+.project-manifesto > span, .project-disclaimer, .form-privacy,
+.footer small, .footer-links a { color: #637088; }
+.line-number { color: #99adcd; }
+.form-fields input::placeholder, .form-fields textarea::placeholder { color: #637088; }
 [data-aos='fade-up'] { transform: translateY(16px); transition: transform .55s ease-out; }
 [data-aos='fade-up'].aos-animate { transform: translateY(0); }
 @media (min-width: 1500px) { .hero { padding-top: 105px; }.hero-bottom { margin-top: 75px; } }

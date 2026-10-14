@@ -46,7 +46,7 @@ Las primeras pruebas se escribieron y ejecutaron antes de sus implementaciones (
 
 Para E2E local puede utilizarse Microsoft Edge con `PLAYWRIGHT_CHANNEL=msedge`, o Chromium instalado mediante la herramienta de Playwright. `PLAYWRIGHT_BASE_URL` permite probar un servidor ya iniciado; de otro modo Playwright inicia el entorno de desarrollo. El flujo CI utiliza Chromium.
 
-Las fuentes se sirven localmente, los gráficos vectoriales reservan su tamaño, GSAP/AOS se importan de forma diferida y el contenido se mantiene visible sin animaciones. Se respeta `prefers-reduced-motion`. Objetivos de campo: LCP ≤2,5 s, INP ≤200 ms, CLS ≤0,1; no se garantiza una puntuación sin medir el despliegue real.
+Las fuentes se sirven localmente con `display: optional`, evitando cambios de tipografía tardíos en conexiones lentas; las imágenes reservan su tamaño. GSAP/AOS se importan de forma diferida, en móvil al comenzar a explorar, y el contenido se mantiene visible sin animaciones. Se respeta `prefers-reduced-motion`. Los textos secundarios conservan contraste suficiente y las etiquetas accesibles corresponden al texto visible. Objetivos de campo: LCP ≤2,5 s, INP ≤200 ms, CLS ≤0,1; no se garantiza una puntuación sin medir el despliegue real.
 
 ## Publicación
 

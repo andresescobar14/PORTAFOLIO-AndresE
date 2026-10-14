@@ -7,7 +7,7 @@ test('the portfolio is readable, navigable and free of horizontal overflow', asy
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Ideas claras.');
   await expect(page.getByRole('banner')).toContainText('Andres Escobar');
   await expect(page.getByRole('link', { name: 'gamerandres0102@gmail.com', exact: true })).toHaveAttribute('href', 'mailto:gamerandres0102@gmail.com');
-  await expect(page.getByRole('link', { name: /Contactar por WhatsApp/ })).toHaveAttribute('href', 'https://wa.me/584126716146');
+  await expect(page.getByRole('link', { name: /WhatsApp/ })).toHaveAttribute('href', 'https://wa.me/584126716146');
   await expect(page.getByRole('heading', { name: 'Las herramientas detrás de las ideas.' })).toBeVisible();
   await page.getByRole('link', { name: 'Explorar proyectos', exact: true }).click();
   await expect(page).toHaveURL(/#proyectos$/);
@@ -26,7 +26,11 @@ test('the portfolio is readable, navigable and free of horizontal overflow', asy
   expect(errors).toEqual([]);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.screenshot({ path: testInfo.outputPath('portfolio.png'), fullPage: true });
+  await page.screenshot({
+    path: testInfo.outputPath('portfolio.png'), fullPage: true, scale: 'css',
+    // Evita artefactos de capas fijas en capturas que exceden el viewport móvil.
+    style: '.site-header { position: relative !important; } .skip-link { display: none !important; }',
+  });
 });
 
 test('the API reports unavailable delivery honestly and disallows other origins', async ({ request }) => {

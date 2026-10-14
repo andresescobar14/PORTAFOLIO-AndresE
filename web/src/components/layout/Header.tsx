@@ -7,7 +7,7 @@ export function Header({ fullName, profession, links }: {
 }) {
   return <header className="site-header">
     <div className="shell header-inner">
-      <a className="brand" href="#inicio" aria-label={`${fullName}, inicio`}>
+      <a className="brand" href="#inicio">
         <span className="brand-mark" aria-hidden="true">a<span>e</span><i /></span>
         <span className="brand-text"><strong>{fullName}</strong><small>{profession}</small></span>
       </a>
