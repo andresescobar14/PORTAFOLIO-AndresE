@@ -16,7 +16,8 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['iPhone 13'], defaultBrowserType: 'chromium' } },
   ],
   webServer: process.env.PLAYWRIGHT_BASE_URL ? undefined : {
-    command: 'pnpm dev --hostname 127.0.0.1',
+    // CI has already built the app; test the production output without dev compilation.
+    command: process.env.CI ? 'pnpm start --hostname 127.0.0.1' : 'pnpm dev --hostname 127.0.0.1',
     url: 'http://127.0.0.1:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

@@ -93,39 +93,49 @@ test('glow follows the mouse and cleans up when animations are paused', async ({
   await expect.poll(() => card.evaluate((el) => Number(getComputedStyle(el).getPropertyValue('--glow-opacity')))).toBe(0);
 });
 
-test('both themes fit small phones, tablets and ultrawide screens', async ({ page, isMobile }, testInfo) => {
-  test.skip(isMobile);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/');
-  for (const image of await page.locator('.project-preview img').all()) {
-    await image.scrollIntoViewIfNeeded();
-    await expect(image).toHaveJSProperty('complete', true);
-    await image.evaluate((element) => (element as HTMLImageElement).decode());
-  }
-  await page.evaluate(() => window.scrollTo(0, 0));
-  for (const width of [320, 390, 768, 1440, 2560]) {
-    await page.setViewportSize({ width, height: 1000 });
-    for (const theme of ['dark', 'light']) {
-      await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
-      await page.evaluate(async () => { await document.fonts.ready; });
+// Each viewport/theme has its own timeout and artifacts; a slow capture must
+// not consume the budget of every remaining responsive check.
+for (const width of [320, 390, 768, 1440, 2560]) {
+  for (const theme of ['dark', 'light'] as const) {
+    test(`responsive layout at ${width}px in ${theme} mode`, async ({ page, isMobile }, testInfo) => {
+      test.skip(isMobile);
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto('/');
+
+      // Layout captures use the site's pause control. Full-motion behavior is
+      // covered separately by the GSAP, cursor and ambient-light tests.
+      await page.getByRole('button', { name: 'Pausar animaciones', exact: true }).click();
+      await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+      if (theme === 'light') await page.getByRole('button', { name: 'Activar modo claro' }).click();
+      await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+
+      await page.evaluate(() => document.fonts.ready);
+      for (const image of await page.locator('.project-preview img').all()) {
+        await image.scrollIntoViewIfNeeded();
+        await image.evaluate((element) => (element as HTMLImageElement).decode());
+      }
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px ${theme}`).toBe(true);
       const collisions = await page.locator('.header-inner').evaluate((header) => {
-        const children = Array.from(header.children).filter((el) => getComputedStyle(el).display !== 'none');
-        return children.some((el, i) => i > 0 && el.getBoundingClientRect().left < children[i - 1].getBoundingClientRect().right - 1);
+        const children = Array.from(header.children).filter((element) => getComputedStyle(element).display !== 'none');
+        return children.some((element, index) => index > 0 && element.getBoundingClientRect().left < children[index - 1].getBoundingClientRect().right - 1);
       });
       expect(collisions, `header ${width}px ${theme}`).toBe(false);
-      await page.screenshot({ path: testInfo.outputPath(`${width}-${theme}.png`), fullPage: true });
+
+      const screenshotOptions = { animations: 'disabled', scale: 'css' } as const;
+      await page.screenshot({ ...screenshotOptions, path: testInfo.outputPath(`${width}-${theme}.png`), fullPage: true });
       if (width === 1440 || width === 390) {
-        await page.screenshot({ path: testInfo.outputPath(`${width}-${theme}-hero.png`) });
+        await page.screenshot({ ...screenshotOptions, path: testInfo.outputPath(`${width}-${theme}-hero.png`) });
         await page.locator('.project-card').first().scrollIntoViewIfNeeded();
-        await page.screenshot({ path: testInfo.outputPath(`${width}-${theme}-project.png`) });
+        await page.screenshot({ ...screenshotOptions, path: testInfo.outputPath(`${width}-${theme}-project.png`) });
         await page.locator('.contact-form').scrollIntoViewIfNeeded();
-        await page.screenshot({ path: testInfo.outputPath(`${width}-${theme}-contact.png`) });
-        await page.evaluate(() => window.scrollTo(0, 0));
+        await page.screenshot({ ...screenshotOptions, path: testInfo.outputPath(`${width}-${theme}-contact.png`) });
       }
-    }
+    });
   }
-});
+}
+
 
 test('content remains available without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
