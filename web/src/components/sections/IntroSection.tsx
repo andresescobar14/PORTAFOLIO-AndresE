@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowUpRight, CodeXml, Layers, Sparkles } from 'lucide-react';
 import { profile } from '@/data/portfolio';
+import { MotionToggle } from '@/components/motion/MotionToggle';
 
 function DeveloperCanvas() {
   return <div className="hero-art" aria-label="Ilustración de un editor de código y una interfaz web" role="img">
@@ -41,7 +42,7 @@ export function IntroSection() {
         <a href="#proyectos" className="button button-primary">Explorar proyectos <ArrowUpRight size={18} aria-hidden="true" /></a>
         <a href={profile.github} className="button button-text" target="_blank" rel="noopener noreferrer"><CodeXml size={18} aria-hidden="true" /> Mi GitHub</a>
       </div>
-      <div className="hero-note"><span className="note-line" /> De la primera idea al último detalle.</div>
+      <div className="hero-note"><span className="note-line" /> De la primera idea al último detalle.</div><MotionToggle />
     </div>
     <DeveloperCanvas />
     <div className="hero-bottom"><span>DESARROLLO CON INTENCIÓN</span><a href="#tecnologias">Un poco más sobre mi mundo <ArrowDown size={15} aria-hidden="true" /></a><span>PORTAFOLIO / 01</span></div>

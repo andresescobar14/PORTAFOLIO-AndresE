@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { profile } from '@/data/portfolio';
 import './globals.css';
+import { themeScript } from '@/lib/theme-script';
+import { motionScript } from '@/lib/motion-script';
 
 const bodyFont = localFont({
   src: '../../node_modules/@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2',
@@ -21,5 +23,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="es" className={`${bodyFont.variable} ${headingFont.variable}`}><body>{children}</body></html>;
+  return <html lang="es" data-theme="dark" data-motion="full" data-motion-version="3" suppressHydrationWarning className={`${bodyFont.variable} ${headingFont.variable}`}>
+    <head><script dangerouslySetInnerHTML={{ __html: themeScript + motionScript }} /></head>
+    <body>{children}</body>
+  </html>;
 }

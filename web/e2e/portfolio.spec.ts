@@ -51,3 +51,252 @@ test('mobile navigation works with reduced motion', async ({ page, isMobile }) =
   await expect(page).toHaveURL(/#tecnologias$/);
   await expect(page.getByRole('heading', { name: 'Las herramientas detrás de las ideas.' })).toBeInViewport();
 });
+
+test('theme persists and project actions point to their real destinations', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.getByRole('button', { name: 'Activar modo claro' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(248, 249, 254)');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(248, 249, 254)');
+  await page.getByRole('button', { name: 'Activar modo oscuro' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  const cards = page.locator('.project-card');
+  await expect(cards).toHaveCount(5);
+  await expect(cards.getByRole('link', { name: /^Demo En Vivo/ })).toHaveCount(4);
+  await expect(cards.getByRole('link', { name: /^Ver Código/ })).toHaveCount(5);
+  await expect(cards.getByRole('link', { name: /^GitHub de Andres/ })).toHaveCount(5);
+  await expect(page.getByRole('link', { name: 'Demo En Vivo de Barbería · Turnos' })).toHaveAttribute('href', 'https://barberia-ae.vercel.app/');
+  await expect(page.getByText('Demo pendiente', { exact: true })).toBeVisible();
+});
+
+test('marquee can be paused and respects the site motion control', async ({ page }) => {
+  await page.goto('/');
+  const track = page.locator('.marquee-track');
+  await expect(track).toHaveCSS('animation-name', 'marquee');
+  await page.getByRole('button', { name: 'Pausar movimiento' }).click();
+  await expect(track).toHaveCSS('animation-play-state', 'paused');
+  await page.getByRole('button', { name: 'Reanudar movimiento' }).click();
+  await expect(page.locator('.marquee')).toHaveAttribute('data-paused', 'false');
+  await page.getByRole('button', { name: 'Pausar animaciones', exact: true }).click();
+  await expect(track).toHaveCSS('animation-name', 'none');
+  await expect(page.locator('.marquee-copy')).toBeHidden();
+  await expect(page.locator('.marquee-toggle')).toBeHidden();
+});
+
+test('glow follows the mouse and cleans up when animations are paused', async ({ page, isMobile }) => {
+  test.skip(isMobile);
+  await page.goto('/');
+  const card = page.locator('.project-card').first();
+  await expect(card).toHaveAttribute('data-scroll-state', 'hidden');
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveAttribute('data-scroll-state', 'visible');
+  await card.hover({ position: { x: 80, y: 100 } });
+  await expect.poll(() => card.evaluate((el) => Number(getComputedStyle(el).getPropertyValue('--glow-opacity')))).toBe(1);
+  // Playwright hover positions start inside the border; allow its 1px inset.
+  await expect.poll(() => card.evaluate((el) => Math.abs(Number(getComputedStyle(el).getPropertyValue('--glow-x')) - 80))).toBeLessThan(2);
+  await page.getByRole('button', { name: 'Pausar animaciones', exact: true }).click();
+  await expect.poll(() => card.evaluate((el) => Number(getComputedStyle(el).getPropertyValue('--glow-opacity')))).toBe(0);
+});
+
+test('both themes fit small phones, tablets and ultrawide screens', async ({ page, isMobile }, testInfo) => {
+  test.skip(isMobile);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  for (const image of await page.locator('.project-preview img').all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect(image).toHaveJSProperty('complete', true);
+    await image.evaluate((element) => (element as HTMLImageElement).decode());
+  }
+  await page.evaluate(() => window.scrollTo(0, 0));
+  for (const width of [320, 390, 768, 1440, 2560]) {
+    await page.setViewportSize({ width, height: 1000 });
+    for (const theme of ['dark', 'light']) {
+      await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
+      await page.evaluate(async () => { await document.fonts.ready; });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px ${theme}`).toBe(true);
+      const collisions = await page.locator('.header-inner').evaluate((header) => {
+        const children = Array.from(header.children).filter((el) => getComputedStyle(el).display !== 'none');
+        return children.some((el, i) => i > 0 && el.getBoundingClientRect().left < children[i - 1].getBoundingClientRect().right - 1);
+      });
+      expect(collisions, `header ${width}px ${theme}`).toBe(false);
+      await page.screenshot({ path: testInfo.outputPath(`${width}-${theme}.png`), fullPage: true });
+      if (width === 1440 || width === 390) {
+        await page.screenshot({ path: testInfo.outputPath(`${width}-${theme}-hero.png`) });
+        await page.locator('.project-card').first().scrollIntoViewIfNeeded();
+        await page.screenshot({ path: testInfo.outputPath(`${width}-${theme}-project.png`) });
+        await page.locator('.contact-form').scrollIntoViewIfNeeded();
+        await page.screenshot({ path: testInfo.outputPath(`${width}-${theme}-contact.png`) });
+        await page.evaluate(() => window.scrollTo(0, 0));
+      }
+    }
+  }
+});
+
+test('content remains available without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.locator('.project-card')).toHaveCount(5);
+  await expect(page.getByRole('link', { name: 'Demo En Vivo de Rick & Morty' })).toBeVisible();
+  await context.close();
+});
+
+test('theme works before hydration and without localStorage', async ({ page }) => {
+  await page.route('**/_next/static/**/*.js', (route) => route.abort());
+  await page.addInitScript(() => { Object.defineProperty(window, 'localStorage', { get() { throw new Error('Storage unavailable'); } }); });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Activar modo claro' }).click();
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(248, 249, 254)');
+  await expect(page.getByRole('button', { name: 'Activar modo oscuro' })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Activar modo oscuro' }).click();
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(8, 11, 18)');
+});
+
+for (const width of [320, 360, 390, 430, 640, 768, 820, 1024, 1280, 1440, 1920, 2560, 3440]) {
+  test(`visible GSAP and card lighting at ${width}px in both themes`, async ({ page, isMobile }, testInfo) => {
+    test.skip(isMobile);
+    test.setTimeout(60_000);
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    for (const theme of ['dark', 'light']) {
+      await page.goto('/');
+      if (theme === 'light') await page.getByRole('button', { name: 'Activar modo claro' }).click();
+      await expect(page.locator('html')).toHaveClass(/gsap-ready/);
+      const skill = page.locator('.skill-card').first();
+      await expect(skill).toHaveAttribute('data-scroll-state', 'hidden');
+      await expect(skill).toHaveCSS('opacity', '0');
+      await skill.scrollIntoViewIfNeeded();
+      await expect(skill).toHaveAttribute('data-scroll-state', 'visible');
+      await expect(skill).toHaveCSS('opacity', '1');
+      await expect.poll(() => skill.evaluate(el => Math.abs(new DOMMatrixReadOnly(getComputedStyle(el).transform).m42))).toBeLessThan(.1);
+      const project = page.locator('.project-card').first();
+      await expect(project).toHaveCSS('opacity', '0');
+      await project.scrollIntoViewIfNeeded();
+      await expect(project).toHaveAttribute('data-scroll-state', 'visible');
+      await expect(project).toHaveCSS('opacity', '1');
+      await expect.poll(() => project.evaluate(el => Math.abs(new DOMMatrixReadOnly(getComputedStyle(el).transform).m42))).toBeLessThan(.1);
+      await project.hover({ position: { x: 100, y: 120 } });
+      await expect(project).toHaveAttribute('data-glow-active', 'true');
+      await expect(page.locator('.cursor-aura')).toHaveCSS('opacity', '1');
+      const light = await project.evaluate((element) => ({
+        background: getComputedStyle(element).backgroundImage,
+        spotlight: getComputedStyle(element, '::before').backgroundImage,
+        layer: getComputedStyle(element, '::before').zIndex,
+        pointerEvents: getComputedStyle(element, '::before').pointerEvents,
+      }));
+      expect(light.background).toContain('radial-gradient');
+      expect(light.spotlight).toContain('radial-gradient');
+      expect(Number(light.layer)).toBeGreaterThan(0);
+      expect(light.pointerEvents).toBe('none');
+      await expect.poll(() => project.evaluate(el => getComputedStyle(el, '::before').opacity)).toBe('1');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await project.locator('img').evaluate((image) => (image as HTMLImageElement).decode());
+      await project.screenshot({ path: testInfo.outputPath(`${width}-${theme}-glow.png`) });
+      if (theme === 'light') await page.getByRole('button', { name: 'Activar modo oscuro' }).click();
+    }
+  });
+}
+
+test('touch screens show GSAP and ambient light without a mouse aura', async ({ page, isMobile }) => {
+  test.skip(!isMobile);
+  test.setTimeout(60_000);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  for (const width of [320, 390, 768, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const theme of ['dark', 'light']) {
+      await page.goto(`/?touch=${width}-${theme}`);
+      if (theme === 'light') await page.getByRole('button', { name: 'Activar modo claro' }).click();
+      await expect(page.locator('html')).toHaveClass(/gsap-ready/);
+      const card = page.locator('.skill-card').first();
+      await card.scrollIntoViewIfNeeded();
+      await expect(card).toHaveAttribute('data-scroll-state', 'visible');
+      await expect(card).toHaveCSS('opacity', '1');
+      expect(await card.evaluate(el => getComputedStyle(el).backgroundImage)).toContain('radial-gradient');
+      await expect(page.locator('.cursor-aura')).toBeHidden();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      if (theme === 'light') await page.getByRole('button', { name: 'Activar modo oscuro' }).click();
+    }
+  }
+});
+
+test('contact panels and section headings reveal visibly on scroll', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveClass(/gsap-ready/);
+  for (const selector of ['.projects-section .section-title-row', '.contact-copy', '.contact-form']) {
+    const panel = page.locator(selector);
+    await expect(panel).toHaveAttribute('data-scroll-state', /hidden|visible|revealing/);
+    await panel.scrollIntoViewIfNeeded();
+    await expect(panel).toHaveAttribute('data-scroll-state', 'visible');
+    await expect(panel).toHaveCSS('opacity', '1');
+  }
+});
+
+test('mouse aura disappears when the pointer leaves the page', async ({ page, isMobile }) => {
+  test.skip(isMobile);
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveClass(/gsap-ready/);
+  await page.mouse.move(200, 300);
+  await expect(page.locator('.cursor-aura')).toHaveCSS('opacity', '1');
+  await page.mouse.move(-20, -20);
+  await expect(page.locator('.cursor-aura')).toHaveCSS('opacity', '0');
+});
+
+test('GSAP starts automatically with OS reduced motion and an old saved pause', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.addInitScript(() => localStorage.setItem('portfolio-motion', 'reduced'));
+  await page.goto('/');
+  expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+  await expect(page.locator('html')).toHaveAttribute('data-motion-version', '3');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'full');
+  await expect(page.locator('html')).toHaveAttribute('data-motion-engine', 'gsap');
+  const card = page.locator('.project-card').first();
+  await expect(card).toHaveCSS('opacity', '0');
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveAttribute('data-scroll-state', 'revealing');
+  await expect(card).toHaveAttribute('data-scroll-state', 'visible');
+  const orb = card.locator('.card-ambient i').first();
+  const before = await orb.getAttribute('style');
+  await expect.poll(() => orb.getAttribute('style')).not.toBe(before);
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'full');
+  await page.getByRole('button', { name: 'Pausar animaciones', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+  await expect(page.locator('html')).not.toHaveClass(/gsap-ready/);
+  await expect(card).toHaveCSS('opacity', '1');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+  await page.getByRole('button', { name: 'Activar animaciones', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-motion-engine', 'gsap');
+});
+test('GSAP replays the card entry after scrolling back above a section', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveClass(/gsap-ready/);
+  const card = page.locator('.project-card').first();
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveAttribute('data-scroll-state', 'visible');
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(card).toHaveAttribute('data-scroll-state', 'hidden');
+  await expect(card).toHaveCSS('opacity', '0');
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveAttribute('data-scroll-state', 'revealing');
+  await expect(card).toHaveAttribute('data-scroll-state', 'visible');
+});
+
+test('JavaScript assets are allowed from the address used to open the portfolio', async ({ page, request, baseURL, isMobile }) => {
+  test.skip(isMobile);
+  await page.goto('/');
+  const scriptPath = await page.locator('script[src]').first().getAttribute('src');
+  expect(scriptPath).toBeTruthy();
+  const origin = new URL(baseURL!).origin;
+  const response = await request.get(new URL(scriptPath!, baseURL).href, {
+    headers: { Origin: origin, Referer: `${origin}/`, 'Sec-Fetch-Mode': 'no-cors', 'Sec-Fetch-Site': 'same-origin' },
+  });
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toContain('javascript');
+  await expect(page.locator('html')).toHaveAttribute('data-motion-engine', 'gsap');
+});

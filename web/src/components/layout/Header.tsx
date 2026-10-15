@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { NavigationLink } from '@/types/portfolio';
 import { MobileNavigation } from './MobileNavigation';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Header({ fullName, profession, links }: {
   fullName: string; profession: string; links: readonly NavigationLink[];
@@ -14,6 +15,7 @@ export function Header({ fullName, profession, links }: {
       <nav className="desktop-navigation" aria-label="Navegación principal">
         {links.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}
       </nav>
+      <ThemeToggle />
       <a className="header-contact" href="#contacto">Hablemos <ArrowUpRight size={16} aria-hidden="true" /></a>
       <MobileNavigation links={links} />
     </div>

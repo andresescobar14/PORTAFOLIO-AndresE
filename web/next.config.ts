@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Allow the LAN address used to test this portfolio on other devices.
+  allowedDevOrigins: ['192.168.0.110'],
   images: { formats: ['image/avif', 'image/webp'] },
   async headers() {
     return [{ source: '/:path*', headers: [
