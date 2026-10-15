@@ -78,19 +78,24 @@ test('marquee can be paused and respects the site motion control', async ({ page
   await expect(page.locator('.marquee-toggle')).toBeHidden();
 });
 
-test('glow follows the mouse and cleans up when animations are paused', async ({ page, isMobile }) => {
+test('card hover keeps ambient light and cursor without a spotlight', async ({ page, isMobile }) => {
   test.skip(isMobile);
   await page.goto('/');
-  const card = page.locator('.project-card').first();
-  await expect(card).toHaveAttribute('data-scroll-state', 'hidden');
-  await card.scrollIntoViewIfNeeded();
-  await expect(card).toHaveAttribute('data-scroll-state', 'visible');
-  await card.hover({ position: { x: 80, y: 100 } });
-  await expect.poll(() => card.evaluate((el) => Number(getComputedStyle(el).getPropertyValue('--glow-opacity')))).toBe(1);
-  // Playwright hover positions start inside the border; allow its 1px inset.
-  await expect.poll(() => card.evaluate((el) => Math.abs(Number(getComputedStyle(el).getPropertyValue('--glow-x')) - 80))).toBeLessThan(2);
+  await expect(page.locator('html')).toHaveClass(/gsap-ready/);
+  for (const selector of ['.skill-card', '.project-card']) {
+    const card = page.locator(selector).first();
+    await card.scrollIntoViewIfNeeded();
+    await expect(card).toHaveAttribute('data-scroll-state', 'visible');
+    const background = await card.evaluate(el => getComputedStyle(el).backgroundImage);
+    await card.hover({ position: { x: 80, y: 100 } });
+    await expect(card).toHaveCSS('background-image', background);
+    expect(background).toContain('radial-gradient');
+    expect(await card.evaluate(el => ['::before', '::after'].map(pseudo => getComputedStyle(el, pseudo).content))).toEqual(['none', 'none']);
+    await expect(card.locator('.card-ambient')).toBeVisible();
+    await expect(page.locator('.cursor-aura')).toHaveCSS('opacity', '1');
+  }
   await page.getByRole('button', { name: 'Pausar animaciones', exact: true }).click();
-  await expect.poll(() => card.evaluate((el) => Number(getComputedStyle(el).getPropertyValue('--glow-opacity')))).toBe(0);
+  await expect(page.locator('.cursor-aura')).toBeHidden();
 });
 
 // Each viewport/theme has its own timeout and artifacts; a slow capture must
@@ -182,22 +187,15 @@ for (const width of [320, 360, 390, 430, 640, 768, 820, 1024, 1280, 1440, 1920, 
       await expect(project).toHaveCSS('opacity', '1');
       await expect.poll(() => project.evaluate(el => Math.abs(new DOMMatrixReadOnly(getComputedStyle(el).transform).m42))).toBeLessThan(.1);
       await project.hover({ position: { x: 100, y: 120 } });
-      await expect(project).toHaveAttribute('data-glow-active', 'true');
       await expect(page.locator('.cursor-aura')).toHaveCSS('opacity', '1');
-      const light = await project.evaluate((element) => ({
-        background: getComputedStyle(element).backgroundImage,
-        spotlight: getComputedStyle(element, '::before').backgroundImage,
-        layer: getComputedStyle(element, '::before').zIndex,
-        pointerEvents: getComputedStyle(element, '::before').pointerEvents,
-      }));
-      expect(light.background).toContain('radial-gradient');
-      expect(light.spotlight).toContain('radial-gradient');
-      expect(Number(light.layer)).toBeGreaterThan(0);
-      expect(light.pointerEvents).toBe('none');
-      await expect.poll(() => project.evaluate(el => getComputedStyle(el, '::before').opacity)).toBe('1');
+      for (const card of [skill, project]) {
+        expect(await card.evaluate(el => getComputedStyle(el).backgroundImage)).toContain('radial-gradient');
+        expect(await card.evaluate(el => ['::before', '::after'].map(pseudo => getComputedStyle(el, pseudo).content))).toEqual(['none', 'none']);
+        await expect(card.locator('.card-ambient')).toBeVisible();
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await project.locator('img').evaluate((image) => (image as HTMLImageElement).decode());
-      await project.screenshot({ path: testInfo.outputPath(`${width}-${theme}-glow.png`) });
+      await project.screenshot({ path: testInfo.outputPath(`${width}-${theme}-ambient.png`) });
       if (theme === 'light') await page.getByRole('button', { name: 'Activar modo oscuro' }).click();
     }
   });

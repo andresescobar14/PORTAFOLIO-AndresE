@@ -204,19 +204,6 @@ svg { flex-shrink: 0; }
     radial-gradient(ellipse at 100% 100%, var(--spotlight-cyan), transparent 65%), var(--surface);
   border: 1px solid var(--line-strong);
 }
-.project-card::before, .skill-card::before {
-  content: ''; position: absolute; z-index: 3; inset: 0; border-radius: inherit;
-  pointer-events: none; opacity: var(--glow-opacity);
-  background: radial-gradient(360px circle at calc(var(--glow-x) * 1px) calc(var(--glow-y) * 1px), var(--spotlight), transparent 75%);
-  transition: opacity .25s;
-}
-.project-card::after, .skill-card::after {
-  content: ''; position: absolute; z-index: 4; inset: -1px; padding: 1px;
-  border-radius: inherit; pointer-events: none; opacity: var(--glow-opacity);
-  background: radial-gradient(240px circle at calc(var(--glow-x) * 1px) calc(var(--glow-y) * 1px), var(--accent), transparent 80%);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude; transition: opacity .25s;
-}
 .project-card:focus-within, .skill-card:focus-within { border-color: var(--accent); }
 .cursor-aura { display: none; }
 @media (any-hover: hover) and (any-pointer: fine) {
