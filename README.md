@@ -1,100 +1,171 @@
+<div align="center">
+
 # Andres Escobar · Portafolio
 
-Portafolio de una sola página con Next.js 16 App Router, TypeScript, Tailwind CSS 4, GSAP y ScrollTrigger. Interfaz oscura por defecto con acentos violeta y azul, tema claro integral, fuentes locales y contenido renderizado en el servidor.
+**Desarrollo web Full Stack · Diseño, código y atención al detalle.**
 
-La aplicación está en **`web/`**. Abre una terminal en esa carpeta y utiliza exclusivamente pnpm:
+Un espacio para conocer mi trabajo, explorar mis proyectos y dar el primer paso hacia una nueva idea.
+
+### [Ver demo en vivo ↗](https://portafolio-andres-liart.vercel.app/)
+
+[Proyectos](https://portafolio-andres-liart.vercel.app/#proyectos) · [Contacto](https://portafolio-andres-liart.vercel.app/#contacto) · [GitHub](https://github.com/andresescobar14)
+
+</div>
+
+![Vista del portafolio de Andres Escobar en modo oscuro](docs/portfolio-preview.jpg)
+
+## Sobre el proyecto
+
+Portafolio personal construido con **Next.js, React y TypeScript**. Reúne mi presentación, conocimientos técnicos, proyectos y canales de contacto en una experiencia responsive con temas oscuro y claro, animaciones de scroll y efectos interactivos con GSAP.
+
+**Demo:** [portafolio-andres-liart.vercel.app](https://portafolio-andres-liart.vercel.app/)
+
+## Características
+
+- **Tema oscuro y claro:** alternancia desde el header y persistencia de la preferencia.
+- **Animaciones con GSAP y ScrollTrigger:** entradas de secciones y tarjetas que se repiten al volver a recorrer la página.
+- **Efectos interactivos:** glow que sigue al puntero, bordes luminosos, aro del cursor, luces ambientales y microinteracciones en botones.
+- **Marquesina de tecnologías:** desplazamiento continuo con control de pausa y logos vectoriales.
+- **Proyectos con acceso directo:** demo en vivo, código fuente y perfil de GitHub.
+- **Contacto funcional:** validación de campos, estados de envío, confirmación y mensajes de error mediante FormSubmit.
+- **Diseño adaptable y accesible:** navegación por teclado, foco visible, etiquetas de formulario y control para pausar las animaciones.
+
+## Tecnologías
+
+| Tecnología | Uso |
+| --- | --- |
+| Next.js 16 · App Router | Estructura de la aplicación y renderizado en el servidor |
+| React 19 · TypeScript | Componentes, interacciones y contratos de datos |
+| Tailwind CSS 4 · CSS | Composición responsive, temas y efectos visuales |
+| GSAP · ScrollTrigger | Scroll, seguimiento del puntero y microinteracciones |
+| Lucide · React Icons | Iconografía vectorial |
+| Zod · FormSubmit | Validación y entrega del formulario de contacto |
+| Vitest · Testing Library · Playwright | Pruebas unitarias, de componentes y de navegador |
+| pnpm · Vercel | Gestión de paquetes y despliegue |
+
+## Proyectos destacados
+
+| Proyecto | Descripción | Demo | Código |
+| --- | --- | --- | --- |
+| Rick & Morty | Explorador de personajes con búsqueda, filtros y favoritos locales | [Abrir](https://rick-morty-andres.vercel.app/main.html) | [Repositorio](https://github.com/andresescobar14/ProyectoRickAndMorty-Andres) |
+| Copia de YouTube | Recreación educativa con búsqueda, filtros y biblioteca local | [Abrir](https://andresescobar14.github.io/Copia-YouTube-Andres/) | [Repositorio](https://github.com/andresescobar14/Copia-YouTube-Andres) |
+| Copia de Spotify | Reproductor educativo con búsqueda y vistas previas de audio | [Abrir](https://andresescobar14.github.io/Proyecto-Spotify-Andres/) | [Repositorio](https://github.com/andresescobar14/Proyecto-Spotify-Andres) |
+| Barbería · Turnos | Agenda de reservas construida con Next.js y Supabase | [Abrir](https://barberia-ae.vercel.app/) | [Repositorio](https://github.com/andresescobar14/barberia-turnos) |
+| Nexo · Registro | Demostración de registro por pasos con validaciones accesibles | [Abrir](https://proyecto-registro-andres.vercel.app/) | [Repositorio](https://github.com/andresescobar14/proyecto-registro-andres) |
+
+## Ejecutar en local
+
+### Requisitos
+
+- Node.js **24.x**.
+- pnpm **12.5.1**, fijado en `web/package.json`.
+- Git.
+
+La aplicación se encuentra en **`web/`**. Todos los comandos de desarrollo se ejecutan desde esa carpeta.
 
 ```sh
+git clone https://github.com/andresescobar14/PORTAFOLIO-AndresE.git
+cd PORTAFOLIO-AndresE/web
 pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Requisitos: Node.js 24 y pnpm 12.5.1. El campo `packageManager` fija la versión del gestor. Se versiona `pnpm-lock.yaml`; el control de instalación y CI rechaza otros gestores y lockfiles.
+Abre [localhost:3000](http://localhost:3000/).
+
+El proyecto utiliza exclusivamente pnpm. La instalación comprueba el gestor y el lockfile para mantener un entorno consistente.
+
+### Comandos disponibles
+
+| Comando | Descripción |
+| --- | --- |
+| `pnpm dev` | Inicia el servidor de desarrollo |
+| `pnpm build` | Genera la compilación de producción |
+| `pnpm start` | Sirve la compilación de producción |
+| `pnpm lint` | Revisa el código con ESLint |
+| `pnpm typecheck` | Comprueba los tipos con TypeScript |
+| `pnpm test` | Ejecuta las pruebas con Vitest |
+| `pnpm test:watch` | Ejecuta Vitest en modo observación |
+| `pnpm test:e2e` | Ejecuta las pruebas de navegador con Playwright |
+| `pnpm check:manager` | Verifica el gestor y los lockfiles |
+| `pnpm icons:generate` | Regenera el sprite de logos de tecnologías |
+
+Para preparar Chromium antes de ejecutar las pruebas de navegador:
+
+```sh
+pnpm exec playwright install chromium
+pnpm test:e2e
+```
+
+Para abrir el sitio desde otro dispositivo de la misma red, inicia `pnpm dev --hostname 0.0.0.0` y configura la IP del equipo en `allowedDevOrigins`, dentro de `web/next.config.ts`.
+
+## Estructura
+
+```text
+PORTAFOLIO-AndresE/
+├── .github/workflows/       # Verificación continua
+├── docs/                   # Vista previa del portafolio
+└── web/
+    ├── public/
+    │   ├── icons/          # Sprite SVG compartido
+    │   └── projects/       # Imágenes de los proyectos
+    ├── scripts/            # Control de pnpm y generación de logos
+    ├── e2e/                # Pruebas de navegador
+    └── src/
+        ├── app/            # Página, layout, metadatos y estilos globales
+        ├── components/     # Secciones y componentes de interfaz
+        ├── data/           # Perfil, tecnologías y proyectos
+        ├── domain/         # Reglas de validación del contacto
+        ├── hooks/          # Comportamiento del formulario y animaciones
+        ├── lib/            # Inicialización del tema y del movimiento
+        ├── services/       # Integración HTTP con FormSubmit
+        └── types/          # Contratos compartidos
+```
 
 ## Personalización
 
-- `web/src/data/portfolio.ts`: identidad, biografía, tecnologías y contactos proporcionados por Andres; proyectos editables.
-- `web/src/app/globals.css`: tokens de color, composición, puntos de ruptura y movimiento reducido.
-- `web/public/projects/`: capturas reales de los cinco proyectos, presentadas mediante `next/image`.
-- `web/src/app/layout.tsx`: metadatos y fuentes locales desde los paquetes Fontsource, sin solicitudes a Google Fonts.
+| Archivo | Qué puedes modificar |
+| --- | --- |
+| `web/src/data/portfolio.ts` | Nombre, presentación, correo, tecnologías y proyectos |
+| `web/src/app/globals.css` | Colores, temas, composición responsive y efectos |
+| `web/src/hooks/usePortfolioMotion.ts` | Animaciones de scroll, luces y seguimiento del puntero |
+| `web/src/app/layout.tsx` | Título, descripción, metadatos y fuentes |
+| `web/public/projects/` | Capturas que aparecen en las tarjetas |
 
-La colección incluye los cinco repositorios elegidos por Andres: Rick & Morty, Copia de YouTube, Copia de Spotify, Barbería y Registro de usuarios. Las descripciones se contrastaron con su código y documentación. Cuatro demos están verificadas; Registro enlaza al código porque su dirección de Pages no está publicada.
+### Formulario de contacto
 
-## Arquitectura
+El formulario está conectado a **FormSubmit** y utiliza el correo definido en `profile.email`. No requiere API keys para esta integración.
 
-`components` contiene presentación; `hooks` coordina interacciones; `domain` valida y ejecuta el caso de uso; `services` integra HTTP, Redis y correo; `types` define contratos pequeños. Los componentes y servicios reciben datos o dependencias. Solo el formulario, el menú móvil, el alternador de tema, el control de la marquesina y las mejoras de movimiento necesitan JavaScript del cliente. Los logos vectoriales se renderizan desde React Icons en el servidor.
+Si adaptas el proyecto y cambias el destinatario, realiza un primer envío y activa la nueva dirección desde el correo de confirmación de FormSubmit. La confirmación visual aparece cuando el proveedor acepta la solicitud; si hay un error, el formulario conserva el mensaje para reintentarlo.
 
-El límite por IP se aplica **dentro de `POST /api/contact`**, antes de leer y entregar el mensaje. No hay otro punto de envío ni doble conteo en un middleware. Upstash mantiene el contador compartido entre instancias: cinco intentos por minuto con ventana deslizante. Un timeout o fallo del limitador cierra el envío con `503`; una cuota agotada devuelve `429` y `Retry-After`.
+[Documentación de FormSubmit](https://formsubmit.co/ajax-documentation)
 
-La ruta valida JSON con Zod, comprueba el origen cuando está presente, rechaza cuerpos superiores a 8 KiB leyendo el tamaño real y descarta el campo trampa antispam. El correo usa texto plano, destinatario y remitente fijos del servidor y el correo del visitante como `reply_to`. No se registran mensajes ni credenciales. El control por IP no reemplaza la protección DDoS del proveedor.
+## Rendimiento y calidad
 
-## Configurar el contacto
+- Componentes de contenido renderizados en el servidor e hidratación de las interacciones necesarias.
+- Fuentes servidas localmente e imágenes con `next/image`, dimensiones reservadas y formatos AVIF/WebP.
+- Un sprite SVG compartido para evitar repetir las rutas de los logos en el HTML, con nombre basado en su contenido y caché inmutable.
+- Importación asíncrona de GSAP, seguimiento del puntero con `requestAnimationFrame` y `quickTo`, y luces ambientales pausadas fuera de la pantalla.
+- Pruebas de navegación, temas, formularios, scroll, efectos y adaptación a móvil, tablet y escritorio. Las pruebas automatizadas del contacto simulan al proveedor y no envían correos reales.
 
-1. Copia `web/.env.example` a `web/.env.local` y completa los valores únicamente en tu entorno privado.
-2. Crea una instancia Redis de Upstash y configura `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`.
-3. Configura `RESEND_API_KEY`, `CONTACT_FROM_EMAIL` (dominio verificado) y `CONTACT_TO_EMAIL` en Resend y el alojamiento.
-4. En Vercel se usa la IP de `x-vercel-forwarded-for`. En otro servidor, configura `TRUSTED_PROXY_IP_HEADER` solamente detrás de un proxy que sobrescriba esa cabecera y bloquee el acceso directo al origen. Sin una IP confiable, la ruta falla de forma cerrada.
-5. Reconstruye la aplicación después de configurar las variables para habilitar el formulario prerenderizado.
+GitHub Actions ejecuta la instalación congelada, el control de pnpm, ESLint, pruebas, compilación, TypeScript y Playwright.
 
-Sin credenciales, el sitio y los enlaces de correo, WhatsApp y GitHub funcionan; el formulario indica que aún no está disponible y la API devuelve `503`. Nunca simula una entrega exitosa. En desarrollo, los envíos comparten el identificador local `127.0.0.1`, manteniendo el límite en Redis.
+## Despliegue en Vercel
 
-## Verificación
+Importa el repositorio y utiliza estos ajustes:
 
-Las tareas declaradas en `web/package.json` son `test` (Vitest), `test:watch`, `lint`, `typecheck`, `build`, `test:e2e` (Playwright) y `check:manager`. CI ejecuta instalación congelada, calidad, pruebas, compilación y navegación en escritorio/móvil.
+| Ajuste | Valor |
+| --- | --- |
+| Framework | Next.js |
+| Root Directory | `web` |
+| Node.js | `24.x` |
+| Install Command | `pnpm install --frozen-lockfile` |
+| Build Command | `pnpm build` |
+| Output Directory | Predeterminado de Next.js |
 
-Las pruebas cubren identidad y navegación, éxito/error del formulario, validación, origen, cuota agotada, IP confiable, fallos de Redis, límite real del cuerpo y entrega no configurada. Las pruebas E2E esperan credenciales ausentes para evitar envíos reales; utilizan datos de prueba y nunca envían correo.
+**Demo pública:** [https://portafolio-andres-liart.vercel.app/](https://portafolio-andres-liart.vercel.app/)
 
-Para E2E local puede utilizarse Microsoft Edge con `PLAYWRIGHT_CHANNEL=msedge`, o Chromium instalado mediante la herramienta de Playwright. `PLAYWRIGHT_BASE_URL` permite probar un servidor ya iniciado; de otro modo Playwright inicia el entorno de desarrollo. El flujo CI utiliza Chromium.
+## Autor
 
-Las fuentes se sirven localmente con `display: optional`, evitando cambios de tipografía tardíos en conexiones lentas; las imágenes reservan su tamaño. GSAP y ScrollTrigger se importan después de la hidratación cuando las animaciones están habilitadas. El contenido se mantiene visible si fallan las animaciones. Se respeta `prefers-reduced-motion`. Los textos secundarios conservan contraste suficiente y las etiquetas accesibles corresponden al texto visible. Objetivos de campo: LCP ≤2,5 s, INP ≤200 ms, CLS ≤0,1; no se garantiza una puntuación sin medir el despliegue real.
+**Andres Escobar** · Desarrollador Web Full Stack
 
-## Publicación
-
-Importa este repositorio en Vercel con **Root Directory: `web`**, framework Next.js y Node.js 24. Configura las variables privadas antes de construir. El código también admite un servidor Node compatible con Next.js.
-
-GitHub almacena el código. GitHub Pages no ejecuta esta API ni el servicio de imágenes de Next.js; para el portafolio completo se necesita alojamiento con servidor. Las demos enlazadas pueden estar en GitHub Pages.
-
-## Referencias
-
-- [Next.js](https://nextjs.org/docs)
-- [Upstash Rate Limit](https://upstash.com/docs/redis/sdks/ratelimit-ts/overview)
-- [Resend](https://resend.com/docs/api-reference/emails/send-email)
-- [GSAP](https://gsap.com/docs/) y [AOS](https://github.com/michalsnik/aos)
-
-Las fuentes DM Sans y Space Grotesk proceden de Fontsource; sus licencias se incluyen en los respectivos paquetes. Las capturas de Rick & Morty, YouTube y Spotify proceden de los repositorios públicos de Andres. Barbería se capturó desde su demo y Registro se renderizó desde el HTML publicado en su repositorio. El script `web/scripts/capture-project-previews.mjs` permite regenerar estas dos últimas capturas sin enviar formularios.
-
-
-## Rediseño oscuro / claro
-
-- El tema inicial es oscuro; el botón del Header alterna entre temas. Una inicialización mínima antes del primer render recupera `portfolio-theme` de `localStorage` sin destellos. Si el almacenamiento está bloqueado, el botón sigue funcionando durante la sesión.
-- Los colores de texto, superficies, campos, bordes y estados dependen de tokens en `globals.css`; ambos temas mantienen contraste. La composición es mobile-first con Tailwind y ajustes progresivos desde 380, 640, 768 y 1024 px. El contenido se limita a 1400 px en pantallas ultraanchas.
-- Cada tarjeta ofrece Demo En Vivo, Ver Código y GitHub. Registro muestra Demo pendiente: su GitHub Pages devuelve 404. Barbería conserva su demo real en Vercel. Las otras tres demos están en GitHub Pages. No se crean URLs de ejemplo.
-- GSAP ScrollTrigger controla las entradas al hacer scroll y las repite al volver a recorrer la sección. GSAP mueve el brillo radial con `quickTo`, reutilizando las animaciones, y anima los botones al pasar el cursor. Se limpian eventos y animaciones al desmontar y al activar movimiento reducido.
-- La marquesina CSS repite un grupo idéntico sin saltos y oculta la copia a lectores de pantalla. Se pausa con el botón o al pasar el cursor. Con movimiento reducido se convierte en una lista estática que muestra todos los logos.
-- El formulario valida antes de enviar, enfoca el primer error, bloquea los campos durante el envío y conserva el mensaje si falla. Éxito y error tienen iconos y anuncios accesibles. No se muestra éxito hasta que el proveedor confirma la entrega.
-
-### Comprobación de esta versión
-
-Compilación de producción, TypeScript, ESLint, control de pnpm y 19 pruebas unitarias correctos. Las pruebas de navegador cubren navegación, ambos temas, persistencia, tres acciones de proyecto, pausa, GSAP ScrollTrigger, seguimiento del cursor, movimiento reducido y lectura sin JavaScript. También verifican entradas visibles y luces en ambos temas a 320, 360, 390, 430, 640, 768, 820, 1024, 1280, 1440, 1920, 2560 y 3440 px, además de móviles y tablets táctiles. Se comprueban desbordamientos y colisiones del Header. El formulario se prueba con un servicio inyectado; **no se envió ningún correo real**.
-
-### Activación pendiente del correo
-
-El código de envío está implementado; el clon público no contiene credenciales. Para recibir mensajes reales hay que configurar Resend, el remitente verificado y Upstash tal como indica «Configurar el contacto». No se incluyen secretos en el código ni en el archivo entregado. Mientras no estén configurados, el formulario comunica su indisponibilidad y mantiene un enlace directo al correo. GitHub Pages no puede ejecutar esta API: publica el portafolio en un alojamiento compatible con Next.js.
-
-### GSAP, fondos luminosos y preferencia de movimiento
-
-Las entradas de tarjetas, títulos y contacto usan GSAP ScrollTrigger: opacidad, desplazamiento de 48–64 px, escala suave y desfase entre tarjetas. Las entradas se repiten al volver a recorrer las secciones. Las luces violeta y cian son capas visibles permanentes dentro de cada tarjeta. GSAP anima su posición y escala solo mientras la tarjeta está en pantalla; fuera de ella se pausan.
-
-El botón **Pausar animaciones**, debajo de la introducción, permite detener los efectos y volver a activarlos. Los efectos están activados por defecto, como solicitó Andres, incluso con movimiento reducido del sistema. Solo una pausa explícita del visitante los detiene; se guarda en `portfolio-motion-v3` para evitar heredar la pausa de versiones antiguas. **Pausar animaciones** revierte las entradas y mantiene el contenido y los fondos visibles. No se modifica la configuración de Windows.
-
-Este caso se comprobó reproduciendo la preferencia real del navegador integrado: `prefers-reduced-motion: reduce`. Se verificaron el arranque automático sin pulsar botones, la pausa explícita, su persistencia al recargar, las entradas repetidas y las luces en movimiento. El tema claro/oscuro conserva su funcionamiento antes de la hidratación.
-
-GSAP se carga de forma asíncrona después del HTML principal. Esta versión usa GSAP para scroll, luces y puntero; la medición previa del 13 % menos de JavaScript correspondía a una implementación diferente y no se aplica a esta revisión. Las imágenes siguen usando carga diferida, tamaños ajustados y decodificación asíncrona.
-
-Las pruebas verifican las animaciones activadas en ambos temas desde 320 hasta 3440 px, además de teléfonos y tablets táctiles. Los recursos sin JavaScript o con animaciones pausadas permanecen visibles. Las pruebas no envían correos reales.
-
-### Acceso por la IP de la red
-
-La dirección utilizada para probar este proyecto es `http://192.168.0.110:3000/`. Next.js 16 bloqueaba sus scripts de desarrollo con HTTP 403 porque esa IP no estaba en `allowedDevOrigins`. Eso impedía hidratar React e iniciar GSAP, aunque el HTML y los fondos fueran visibles. `web/next.config.ts` permite ahora específicamente `192.168.0.110`.
-
-Se reprodujo el fallo en esa misma dirección, se confirmó el cambio de respuesta de los scripts de 403 a 200 y se verificó GSAP activo en el navegador integrado, móvil y escritorio. Una prueba de regresión comprueba la respuesta real del JavaScript con las cabeceras de la dirección utilizada para abrir la página. Si cambia la IP local del equipo, hay que actualizar esa entrada de desarrollo.
+[GitHub](https://github.com/andresescobar14) · [Correo](mailto:gamerandres0102@gmail.com) · [Contactar desde el portafolio](https://portafolio-andres-liart.vercel.app/#contacto)

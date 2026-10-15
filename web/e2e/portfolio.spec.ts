@@ -15,8 +15,8 @@ test('the portfolio is readable, navigable and free of horizontal overflow', asy
   await page.getByRole('link', { name: 'Hablemos', exact: false }).click();
   await expect(page).toHaveURL(/#contacto$/);
   await expect(page.getByRole('heading', { name: 'Todo empieza con un hola.' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Enviar mensaje' })).toBeDisabled();
-  await expect(page.getByText('El formulario estará disponible pronto.', { exact: false })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Enviar mensaje' })).toBeEnabled();
+  await expect(page.locator('.contact-form')).toHaveAttribute('action', 'https://formsubmit.co/gamerandres0102@gmail.com');
   await page.evaluate(async () => {
     await document.fonts.ready;
     await Promise.all(Array.from(document.images).map((image) => image.decode().catch(() => {})));
@@ -31,14 +31,6 @@ test('the portfolio is readable, navigable and free of horizontal overflow', asy
     // Evita artefactos de capas fijas en capturas que exceden el viewport móvil.
     style: '.site-header { position: relative !important; } .skip-link { display: none !important; }',
   });
-});
-
-test('the API reports unavailable delivery honestly and disallows other origins', async ({ request }) => {
-  const response = await request.post('/api/contact', { data: { name: 'Test', email: 'test@example.com', message: 'Mensaje de prueba que no debe enviarse.', website: '' } });
-  expect(response.status()).toBe(503);
-  expect((await response.json()).ok).toBe(false);
-  const crossOrigin = await request.post('/api/contact', { headers: { Origin: 'https://invalid.test' }, data: {} });
-  expect(crossOrigin.status()).toBe(403);
 });
 
 test('mobile navigation works with reduced motion', async ({ page, isMobile }) => {
@@ -65,11 +57,11 @@ test('theme persists and project actions point to their real destinations', asyn
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   const cards = page.locator('.project-card');
   await expect(cards).toHaveCount(5);
-  await expect(cards.getByRole('link', { name: /^Demo En Vivo/ })).toHaveCount(4);
+  await expect(cards.getByRole('link', { name: /^Demo En Vivo/ })).toHaveCount(5);
   await expect(cards.getByRole('link', { name: /^Ver Código/ })).toHaveCount(5);
   await expect(cards.getByRole('link', { name: /^GitHub de Andres/ })).toHaveCount(5);
   await expect(page.getByRole('link', { name: 'Demo En Vivo de Barbería · Turnos' })).toHaveAttribute('href', 'https://barberia-ae.vercel.app/');
-  await expect(page.getByText('Demo pendiente', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Demo En Vivo de Registro de usuarios' })).toHaveAttribute('href', 'https://proyecto-registro-andres.vercel.app/');
 });
 
 test('marquee can be paused and respects the site motion control', async ({ page }) => {

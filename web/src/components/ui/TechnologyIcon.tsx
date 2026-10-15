@@ -1,16 +1,11 @@
-import {
-  SiHtml5, SiCss, SiTailwindcss, SiJavascript, SiTypescript, SiNextdotjs,
-  SiReact, SiSupabase, SiMongodb, SiPython, SiNodedotjs, SiPostgresql,
-} from 'react-icons/si';
-import type { IconType } from 'react-icons';
+import { technologySprite, technologySymbols } from '@/data/technology-icons';
 
-const icons: Record<string, IconType> = {
-  HTML: SiHtml5, CSS: SiCss, 'Tailwind CSS': SiTailwindcss, JavaScript: SiJavascript,
-  TypeScript: SiTypescript, 'Next.js': SiNextdotjs, 'React.js': SiReact,
-  Supabase: SiSupabase, MongoDB: SiMongodb, Python: SiPython,
-  'Node.js': SiNodedotjs, PostgreSQL: SiPostgresql,
-};
 export function TechnologyIcon({ name }: { name: string }) {
-  const Icon = icons[name];
-  return Icon ? <Icon size={24} aria-hidden="true" focusable="false" /> : null;
+  const symbol = technologySymbols[name];
+  if (!symbol) return null;
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+      <use href={technologySprite + '#' + symbol} />
+    </svg>
+  );
 }

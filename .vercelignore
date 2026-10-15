@@ -1,0 +1,7 @@
+web/.next/
+web/node_modules/
+web/test-results/
+web/playwright-report/
+web/e2e/
+web/src/**/*.test.ts
+web/src/**/*.test.tsx

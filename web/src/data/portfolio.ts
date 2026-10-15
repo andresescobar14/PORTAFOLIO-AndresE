@@ -43,7 +43,7 @@ export const projects: readonly Project[] = [
     image: '/projects/rick-morty.jpg', imageAlt: 'Captura real del catálogo de personajes de Rick & Morty desarrollado por Andres Escobar',
     technologies: ['JavaScript', 'API REST', 'GSAP'], kind: 'project',
     repository: 'https://github.com/andresescobar14/ProyectoRickAndMorty-Andres',
-    demo: 'https://andresescobar14.github.io/ProyectoRickAndMorty-Andres/',
+    demo: 'https://rick-morty-andres.vercel.app/main.html',
   },
   {
     id: 'youtube', title: 'Copia de YouTube', category: 'FRONTEND · RECREACIÓN EDUCATIVA',
@@ -71,9 +71,10 @@ export const projects: readonly Project[] = [
   },
   {
     id: 'registro', title: 'Registro de usuarios', category: 'JAVASCRIPT · VALIDACIÓN DE FORMULARIOS',
-    description: 'Formulario de registro con validación de correo, teléfono, contraseña, cédula y edad. Mensajes de error y confirmación del lado del navegador.',
-    image: '/projects/registro.jpg', imageAlt: 'Captura del formulario de registro de usuarios del repositorio proyecto-registro-andres',
+    description: 'Una experiencia de registro por pasos, con validación accesible, indicador de contraseña y confirmación local. Diseño responsive sin dependencias externas.',
+    image: '/projects/registro-nexo.jpg', imageAlt: 'Captura del formulario de registro de usuarios del repositorio proyecto-registro-andres',
     technologies: ['HTML', 'Tailwind CSS', 'JavaScript'], kind: 'project',
     repository: 'https://github.com/andresescobar14/proyecto-registro-andres',
+    demo: 'https://proyecto-registro-andres.vercel.app/',
   },
 ];
