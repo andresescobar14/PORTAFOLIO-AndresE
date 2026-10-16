@@ -117,7 +117,7 @@ svg { flex-shrink: 0; }
 .canvas-label { display: none; }
 .hero-bottom { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 35px; padding-block: 24px; border-top: 1px solid var(--line); color: var(--subtle); font-size: 8px; letter-spacing: 1px; }
 .hero-bottom > span:last-child { display: none; }.hero-bottom a { display: flex; align-items: center; gap: 8px; letter-spacing: 0; font-size: 9px; }
-.skills-section { border-block: 1px solid var(--line); background: linear-gradient(180deg,var(--glow),transparent 40%); }
+.skills-section { padding-bottom: clamp(40px, 4vw, 64px); border-block: 1px solid var(--line); background: linear-gradient(180deg,var(--glow),transparent 40%); }
 .eyebrow { display: flex; align-items: center; gap: 12px; color: var(--accent); font-size: 9px; letter-spacing: 1.5px; font-weight: 500; }
 .eyebrow > span { color: var(--subtle); font-family: monospace; border-right: 1px solid var(--line-strong); padding-right: 12px; }
 .section-heading h2 { font-size: clamp(32px, 4vw, 46px); line-height: 1.15; letter-spacing: -.05em; margin-top: 20px; max-width: 590px; font-weight: 500; text-wrap: balance; }
@@ -224,7 +224,7 @@ svg { flex-shrink: 0; }
 .card-ambient i:last-child { right: -25%; bottom: -30%; background: radial-gradient(ellipse, var(--ambient-cyan), transparent 70%); }
 .project-preview, .project-information, .skill-top, .skill-card > h3, .skill-card > p { position: relative; z-index: 1; }
 .project-card, .skill-card { box-shadow: 0 14px 45px #00000018, 0 0 28px var(--glow-bright); }
-.projects-section { background: radial-gradient(ellipse at 25% 30%, var(--glow), transparent 60%); }
+.projects-section { padding-top: clamp(48px, 5vw, 72px); background: radial-gradient(ellipse at 25% 30%, var(--glow), transparent 60%); }
 .motion-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; min-height: 36px; margin-top: 16px; border: 1px solid var(--line-strong); border-radius: 30px; color: var(--accent); background: var(--glow); font-size: 11px; }
 .motion-pause { display: none; }
 html[data-motion='full'] .motion-pause { display: block; }
